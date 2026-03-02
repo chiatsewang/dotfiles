@@ -38,11 +38,23 @@ install_zsh() {
 
 	export CFLAGS="-I$PREFIX/include" LDFLAGS="-L$PREFIX/lib"
 	export PKG_CONFIG_PATH="$PREFIX/lib/pkgconfig:${PKG_CONFIG_PATH:-}"
-	# Disable termcap module to avoid ncurses conflicts
-	./configure --prefix="$PREFIX" --enable-multibyte --disable-dynamic
-	make -j"$(nproc)" && make install
+	# Configure without termcap module to avoid ncurses conflicts
+	./configure --prefix="$PREFIX" --enable-multibyte \
+		--disable-dynamic-nss \
+		--enable-cap \
+		--enable-termcap=no
 
-	ok "Zsh to $PREFIX/bin/zsh"
+	if make -j"$(nproc)" && make install; then
+		ok "Zsh to $PREFIX/bin/zsh"
+	else
+		warn "Zsh build failed - trying without local ncurses"
+		# Clean and retry without the local ncurses paths
+		make clean
+		export CFLAGS="" LDFLAGS=""
+		./configure --prefix="$PREFIX" --enable-multibyte --enable-termcap=no
+		make -j"$(nproc)" && make install
+		ok "Zsh to $PREFIX/bin/zsh"
+	fi
 }
 
 verify_zsh() { zsh --version 2>&1 | head -1; }
