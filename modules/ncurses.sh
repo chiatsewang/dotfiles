@@ -5,10 +5,21 @@ install_ncurses() {
 	info "-- ncurses --"
 	local ver="${NCURSES_VERSION:-6.4}"
 
-	# Check if ncurses is already built
+	# Always export environment variables for subsequent builds
+	export PATH="$PREFIX/bin:$PATH"
+	export LD_LIBRARY_PATH="$PREFIX/lib:${LD_LIBRARY_PATH:-}"
+	export PKG_CONFIG_PATH="$PREFIX/lib/pkgconfig:${PKG_CONFIG_PATH:-}"
+	export CPPFLAGS="-I$PREFIX/include"
+	export LDFLAGS="-L$PREFIX/lib"
+
+	# Check if ncurses is already properly installed
 	if [[ -f "$PREFIX/lib/libncursesw.so" ]] || [[ -f "$PREFIX/lib/libncursesw.a" ]]; then
-		ok "ncurses already installed in $PREFIX"
-		return
+		if [[ -f "$PREFIX/lib/pkgconfig/ncursesw.pc" ]] && pkg-config --exists ncursesw 2>/dev/null; then
+			ok "ncurses already installed in $PREFIX"
+			return
+		else
+			warn "ncurses files found but incomplete, reinstalling..."
+		fi
 	fi
 
 	info "Compiling ncurses $ver from source to $PREFIX ..."
@@ -45,5 +56,30 @@ install_ncurses() {
 }
 
 verify_ncurses() {
-	[[ -f "$PREFIX/lib/libncursesw.so" ]] || [[ -f "$PREFIX/lib/libncursesw.a" ]] && echo "ncurses installed"
+	# Check if library files exist
+	if [[ ! -f "$PREFIX/lib/libncursesw.so" ]] && [[ ! -f "$PREFIX/lib/libncursesw.a" ]]; then
+		echo "ncurses library files not found"
+		return 1
+	fi
+
+	# Check if header files exist
+	if [[ ! -f "$PREFIX/include/ncurses.h" ]] && [[ ! -f "$PREFIX/include/ncursesw/ncurses.h" ]]; then
+		echo "ncurses header files not found"
+		return 1
+	fi
+
+	# Check if pkg-config file exists
+	if [[ ! -f "$PREFIX/lib/pkgconfig/ncursesw.pc" ]]; then
+		echo "ncurses pkg-config file not found"
+		return 1
+	fi
+
+	# Export PKG_CONFIG_PATH and verify pkg-config can find it
+	export PKG_CONFIG_PATH="$PREFIX/lib/pkgconfig:${PKG_CONFIG_PATH:-}"
+	if ! pkg-config --exists ncursesw 2>/dev/null; then
+		echo "ncurses not detectable via pkg-config"
+		return 1
+	fi
+
+	echo "ncurses $(pkg-config --modversion ncursesw) installed and verified"
 }

@@ -32,22 +32,23 @@ install_zsh() {
 	tar xf "$tarball" --strip-components=1 2>/dev/null || tar xf "$tarball"
 
 	# Configure with locally-built ncurses
-	export CPPFLAGS="-I$PREFIX/include -I$PREFIX/include/ncursesw"
-	export LDFLAGS="-L$PREFIX/lib"
 	export PKG_CONFIG_PATH="$PREFIX/lib/pkgconfig${PKG_CONFIG_PATH:+:$PKG_CONFIG_PATH}"
 
-	if ! ./configure --prefix="$PREFIX" --enable-multibyte >/dev/null 2>&1; then
+	info "Configuring zsh..."
+	if ! CPPFLAGS="-I$PREFIX/include -I$PREFIX/include/ncursesw" LDFLAGS="-L$PREFIX/lib" ./configure --prefix="$PREFIX" --enable-multibyte; then
 		warn "Zsh configuration failed - check ncurses installation"
 		warn "Skipping zsh installation"
 		return
 	fi
 
-	if ! make -j"$(nproc)" >/dev/null 2>&1; then
+	info "Building zsh (this may take a few minutes)..."
+	if ! make -j"$(nproc)"; then
 		warn "Zsh build failed - skipping installation"
 		return
 	fi
 
-	make install >/dev/null 2>&1
+	info "Installing zsh..."
+	make install
 	ok "Zsh installed to $PREFIX/bin/zsh"
 }
 
