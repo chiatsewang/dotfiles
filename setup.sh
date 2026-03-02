@@ -3,17 +3,20 @@
 # setup.sh — Modular dev environment bootstrap (no sudo)
 #
 # Usage:
-#   bash <(curl -fsSL https://raw.githubusercontent.com/<YOU>/dotfiles/main/setup.sh)
+#   bash <(curl -fsSL https://raw.githubusercontent.com/chiatsewang/dotfiles/main/setup.sh)
 #
 #   # Or after cloning:
 #   bash setup.sh                    # install everything
 #   bash setup.sh ssh zsh python     # install specific modules
 #   bash setup.sh --list             # show available modules
+#   bash setup.sh --version          # show version
 # ============================================================================
 set -euo pipefail
 
+VERSION="1.0.0"
+
 # ── Resolve repo root (works both via curl pipe and local clone) ─────────
-if [[ -f "$(dirname "${BASH_SOURCE[0]:-}")/modules/ssh.sh" ]]; then
+if [[ -f "$(dirname "${BASH_SOURCE[0]:-}")/modules/ssh-github.sh" ]]; then
 	DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 else
 	# Running via curl — clone first
@@ -22,8 +25,8 @@ else
 		git -C "$DOTFILES_DIR" pull --ff-only 2>/dev/null || true
 	else
 		echo "[INFO]  Cloning dotfiles to $DOTFILES_DIR ..."
-		git clone https://github.com/ "$DOTFILES_DIR" <YOU >/dotfiles.git 2>/dev/null ||
-			git clone git@github.com: "$DOTFILES_DIR" <YOU >/dotfiles.git
+		git clone "https://github.com/chiatsewang/dotfiles.git" "$DOTFILES_DIR" 2>/dev/null ||
+			git clone "git@github.com:chiatsewang/dotfiles.git" "$DOTFILES_DIR"
 	fi
 	exec bash "$DOTFILES_DIR/setup.sh" "$@"
 fi
@@ -60,6 +63,11 @@ list_modules() {
 }
 
 # ── Parse args ───────────────────────────────────────────────────────────────
+if [[ "${1:-}" == "--version" || "${1:-}" == "-v" ]]; then
+	echo "dotfiles v$VERSION"
+	exit 0
+fi
+
 if [[ "${1:-}" == "--list" || "${1:-}" == "-l" ]]; then
 	list_modules
 	exit 0

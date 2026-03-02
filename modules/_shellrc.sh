@@ -23,13 +23,48 @@ fi
 # ── end dotfiles ─────────────────────────────────────────────────────────
 RCEOF
 
-	for rc in "$HOME/.bashrc" "$HOME/.zshrc"; do
-		touch "$rc"
-		if grep -qF "$MARKER" "$rc"; then
-			ok "$(basename "$rc") already configured"
+	local BASH_ZSH_BLOCK
+	read -r -d '' BASH_ZSH_BLOCK <<'BASHEOF' || true
+# ── dotfiles managed block ───────────────────────────────────────────────
+export PATH="$HOME/.local/bin:$HOME/.cargo/bin:$HOME/.npm-global/bin:$HOME/.claude/bin:$PATH"
+export LD_LIBRARY_PATH="$HOME/.local/lib:${LD_LIBRARY_PATH:-}"
+
+# nvm
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && source "$NVM_DIR/nvm.sh"
+[ -s "$NVM_DIR/bash_completion" ] && source "$NVM_DIR/bash_completion"
+
+# ssh-agent (reuse or start)
+if [ -z "${SSH_AUTH_SOCK:-}" ]; then
+    eval "$(ssh-agent -s)" >/dev/null 2>&1
+fi
+
+# Auto-switch to zsh if available and not already in zsh
+if [ -n "$BASH_VERSION" ] && command -v zsh >/dev/null 2>&1 && [ -z "$ZSH_VERSION" ]; then
+    exec zsh
+fi
+# ── end dotfiles ─────────────────────────────────────────────────────────
+BASHEOF
+
+	# Configure .bashrc
+	if [ -f "$HOME/.bashrc" ]; then
+		touch "$HOME/.bashrc"
+		if grep -qF "$MARKER" "$HOME/.bashrc"; then
+			ok ".bashrc already configured"
 		else
-			printf "\n%s\n" "$BLOCK" >>"$rc"
-			ok "Appended dotfiles block to $(basename "$rc")"
+			printf "\n%s\n" "$BASH_ZSH_BLOCK" >>"$HOME/.bashrc"
+			ok "Appended dotfiles block to .bashrc (with zsh auto-switch)"
 		fi
-	done
+	fi
+
+	# Configure .zshrc
+	if [ -f "$HOME/.zshrc" ] || command -v zsh >/dev/null 2>&1; then
+		touch "$HOME/.zshrc"
+		if grep -qF "$MARKER" "$HOME/.zshrc"; then
+			ok ".zshrc already configured"
+		else
+			printf "\n%s\n" "$BLOCK" >>"$HOME/.zshrc"
+			ok "Appended dotfiles block to .zshrc"
+		fi
+	fi
 }
