@@ -24,37 +24,18 @@ install_zsh() {
 
 	tar xf "$tarball" --strip-components=1 2>/dev/null || tar xf "$tarball"
 
-	# Local ncurses if system one missing
-	if ! pkg-config --exists ncursesw 2>/dev/null && [[ ! -d "$PREFIX/include/ncursesw" ]]; then
-		warn "Building local ncurses ..."
-		local nc_dir="$PREFIX/src/ncurses-6.5"
-		ensure_dir "$nc_dir" && cd "$nc_dir" || return
-		curl -fSL -o nc.tar.gz "https://ftp.gnu.org/pub/gnu/ncurses/ncurses-6.5.tar.gz"
-		tar xzf nc.tar.gz --strip-components=1
-		./configure --prefix="$PREFIX" --with-shared --enable-widec --without-debug
-		make -j"$(nproc)" && make install
-		cd "$src_dir" || return
+	# Use system ncurses - don't build local version to avoid conflicts
+	./configure --prefix="$PREFIX" --enable-multibyte
+
+	if ! make -j"$(nproc)"; then
+		fail "Zsh build failed. You may need to install ncurses-devel:
+  On RHEL/CentOS: sudo yum install ncurses-devel
+  On Debian/Ubuntu: sudo apt install libncurses-dev
+  On macOS: brew install ncurses"
 	fi
 
-	export CFLAGS="-I$PREFIX/include" LDFLAGS="-L$PREFIX/lib"
-	export PKG_CONFIG_PATH="$PREFIX/lib/pkgconfig:${PKG_CONFIG_PATH:-}"
-	# Configure without termcap module to avoid ncurses conflicts
-	./configure --prefix="$PREFIX" --enable-multibyte \
-		--disable-dynamic-nss \
-		--enable-cap \
-		--enable-termcap=no
-
-	if make -j"$(nproc)" && make install; then
-		ok "Zsh to $PREFIX/bin/zsh"
-	else
-		warn "Zsh build failed - trying without local ncurses"
-		# Clean and retry without the local ncurses paths
-		make clean
-		export CFLAGS="" LDFLAGS=""
-		./configure --prefix="$PREFIX" --enable-multibyte --enable-termcap=no
-		make -j"$(nproc)" && make install
-		ok "Zsh to $PREFIX/bin/zsh"
-	fi
+	make install
+	ok "Zsh installed to $PREFIX/bin/zsh"
 }
 
 verify_zsh() { zsh --version 2>&1 | head -1; }

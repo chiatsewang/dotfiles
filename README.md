@@ -4,6 +4,17 @@
 
 Modular, no-sudo dev environment bootstrap. One command, new server ready.
 
+## Prerequisites
+
+System libraries (typically pre-installed, or available via package manager):
+
+- **ncurses-devel** - Required for zsh
+  - RHEL/CentOS: `sudo yum install ncurses-devel`
+  - Debian/Ubuntu: `sudo apt install libncurses-dev`
+  - macOS: `brew install ncurses`
+
+All other tools install to `~/.local` without sudo.
+
 ## Quick Start
 
 ```bash
