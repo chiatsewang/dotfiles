@@ -26,13 +26,19 @@ fi
 [[ -f ~/.p10k.zsh ]] && source ~/.p10k.zsh
 
 # ── Paths ────────────────────────────────────────────────────────────────────
-export PATH="$HOME/.local/bin:$HOME/.cargo/bin:$HOME/.npm-global/bin:$HOME/.claude/bin:$PATH"
+export PATH="$HOME/.local/bin:$HOME/.cargo/bin:$HOME/.claude/bin:$PATH"
 export LD_LIBRARY_PATH="$HOME/.local/lib:${LD_LIBRARY_PATH:-}"
 
 # ── nvm ──────────────────────────────────────────────────────────────────────
+# nvm is incompatible with PREFIX variable, temporarily unset it
 export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && source "$NVM_DIR/nvm.sh"
-[ -s "$NVM_DIR/bash_completion" ] && source "$NVM_DIR/bash_completion"
+if [ -s "$NVM_DIR/nvm.sh" ]; then
+    _SAVED_PREFIX="$PREFIX"
+    unset PREFIX
+    source "$NVM_DIR/nvm.sh"
+    [ -s "$NVM_DIR/bash_completion" ] && source "$NVM_DIR/bash_completion"
+    export PREFIX="$_SAVED_PREFIX"
+fi
 
 # ── ssh-agent ────────────────────────────────────────────────────────────────
 if [ -z "${SSH_AUTH_SOCK:-}" ]; then

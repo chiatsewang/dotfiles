@@ -34,12 +34,6 @@ install_node() {
 	# Restore PREFIX
 	export PREFIX="$saved_prefix"
 
-	info "Configuring npm global prefix..."
-	local npm_global="$HOME/.npm-global"
-	ensure_dir "$npm_global"
-	npm config set prefix "$npm_global"
-	export PATH="$npm_global/bin:$PATH"
-
 	ok "Node $(node --version) / npm $(npm --version)"
 }
 
