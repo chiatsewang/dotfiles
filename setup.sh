@@ -132,5 +132,5 @@ done
 
 echo "╠══════════════════════════════════════════════════════════════╣"
 echo "║  source ~/.zshrc  (or restart shell)                         ║"
-echo "║  claude            (to authenticate)                         ║"
+echo "║  claude           (to authenticate)                          ║"
 echo "╚══════════════════════════════════════════════════════════════╝"

@@ -7,6 +7,10 @@ install_node() {
 	local nvm_ver="${NVM_VERSION:-v0.40.1}"
 	local node_ver="${NODE_VERSION:---lts}"
 
+	# Temporarily unset PREFIX to avoid conflicts with nvm
+	local saved_prefix="$PREFIX"
+	unset PREFIX
+
 	if [[ -s "$NVM_DIR/nvm.sh" ]]; then
 		ok "nvm already installed"
 	else
@@ -26,6 +30,9 @@ install_node() {
 		nvm alias default node
 		ok "Node $(node --version) installed"
 	fi
+
+	# Restore PREFIX
+	export PREFIX="$saved_prefix"
 
 	info "Configuring npm global prefix..."
 	local npm_global="$HOME/.npm-global"
