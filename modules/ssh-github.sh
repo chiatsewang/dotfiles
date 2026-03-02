@@ -2,10 +2,10 @@
 # DESC: GitHub SSH key (Ed25519)
 
 install_ssh_github() {
-	info "── ssh-github ──"
+	info "-- ssh-github --"
 
 	# Prompt for GitHub account name
-	read -rp "  GitHub account name (e.g., personal, work): " account_name
+	read -rp "GitHub account name (e.g., personal, work): " account_name
 	if [[ -z "$account_name" ]]; then
 		warn "Account name is required"
 		return 1
@@ -17,23 +17,26 @@ install_ssh_github() {
 	chmod 700 "$HOME/.ssh"
 
 	if [[ -f "$key" ]]; then
-		ok "SSH key exists at $key"
+		ok "SSH key already exists at $key"
 	else
+		info "Generating SSH key..."
 		local default_email
 		default_email="$(whoami)@$(hostname)"
-		read -rp "  Email for key [$default_email]: " email
+		read -rp "Email for key [$default_email]: " email
 		email="${email:-$default_email}"
 		ssh-keygen -t ed25519 -C "$email" -f "$key" -N ""
-		ok "SSH key generated"
+		ok "SSH key generated at $key"
 	fi
 
 	# ssh-agent
+	info "Adding key to ssh-agent..."
 	if ! ssh-add -l &>/dev/null 2>&1; then
 		eval "$(ssh-agent -s)" >/dev/null
 	fi
 	ssh-add "$key" 2>/dev/null || true
 
 	# ~/.ssh/config
+	info "Configuring SSH config..."
 	local cfg="$HOME/.ssh/config"
 	local host_alias="github.com-${account_name}"
 
@@ -48,9 +51,9 @@ Host ${host_alias}
     AddKeysToAgent yes
 EOF
 		chmod 600 "$cfg"
-		ok "SSH config to ${host_alias} added"
+		ok "SSH config entry ${host_alias} added"
 	else
-		ok "SSH config already has ${host_alias}"
+		ok "SSH config entry ${host_alias} already exists"
 		# If config exists, assume key is already set up
 		return
 	fi

@@ -26,9 +26,9 @@ install_ohmyzsh() {
 	for name in "${!plugins[@]}"; do
 		local dest="$custom/plugins/$name"
 		if [[ -d "$dest" ]]; then
-			ok "Plugin $name already present"
+			ok "Plugin $name already installed"
 		else
-			info "Cloning plugin: $name"
+			info "Installing plugin: $name..."
 			git clone --depth=1 "${plugins[$name]}" "$dest"
 			ok "Plugin $name installed"
 		fi
@@ -39,7 +39,7 @@ install_ohmyzsh() {
 	if [[ -d "$p10k_dir" ]]; then
 		ok "powerlevel10k already installed"
 	else
-		info "Cloning powerlevel10k ..."
+		info "Installing powerlevel10k theme..."
 		git clone --depth=1 https://github.com/romkatv/powerlevel10k.git "$p10k_dir"
 		ok "powerlevel10k installed"
 	fi

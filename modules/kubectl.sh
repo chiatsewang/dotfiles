@@ -9,14 +9,15 @@ install_kubectl() {
 		return
 	fi
 
+	info "Fetching latest kubectl version..."
 	local version
 	version="$(curl -fsSL https://dl.k8s.io/release/stable.txt)"
-	info "Installing kubectl $version to $PREFIX/bin ..."
 
+	info "Downloading kubectl $version..."
 	curl -fsSL "https://dl.k8s.io/release/${version}/bin/linux/amd64/kubectl" -o "$PREFIX/bin/kubectl"
 	chmod +x "$PREFIX/bin/kubectl"
 
-	ok "kubectl to $(kubectl version --client --short 2>/dev/null || kubectl version --client 2>&1 | head -1)"
+	ok "kubectl installed - $(kubectl version --client --short 2>/dev/null || kubectl version --client 2>&1 | head -1)"
 }
 
 verify_kubectl() { kubectl version --client --short 2>/dev/null || echo "installed"; }

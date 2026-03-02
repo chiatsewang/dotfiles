@@ -34,6 +34,7 @@ install_ncurses() {
 
 	tar xf "$tarball" --strip-components=1 2>/dev/null || tar xf "$tarball"
 
+	info "Configuring ncurses..."
 	if ! ./configure --prefix="$PREFIX" \
 		--with-shared \
 		--with-normal \
@@ -41,17 +42,19 @@ install_ncurses() {
 		--without-ada \
 		--enable-widec \
 		--enable-pc-files \
-		--with-pkg-config-libdir="$PREFIX/lib/pkgconfig" >/dev/null 2>&1; then
+		--with-pkg-config-libdir="$PREFIX/lib/pkgconfig"; then
 		warn "ncurses configuration failed"
 		return 1
 	fi
 
-	if ! make -j"$(nproc)" >/dev/null 2>&1; then
+	info "Building ncurses (this may take a few minutes)..."
+	if ! make -j"$(nproc)"; then
 		warn "ncurses build failed"
 		return 1
 	fi
 
-	make install >/dev/null 2>&1
+	info "Installing ncurses..."
+	make install
 	ok "ncurses installed to $PREFIX"
 }
 

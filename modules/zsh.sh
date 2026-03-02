@@ -35,7 +35,10 @@ install_zsh() {
 	export PKG_CONFIG_PATH="$PREFIX/lib/pkgconfig${PKG_CONFIG_PATH:+:$PKG_CONFIG_PATH}"
 
 	info "Configuring zsh..."
-	if ! CPPFLAGS="-I$PREFIX/include -I$PREFIX/include/ncursesw" LDFLAGS="-L$PREFIX/lib" ./configure --prefix="$PREFIX" --enable-multibyte; then
+	if ! CPPFLAGS="-I$PREFIX/include -I$PREFIX/include/ncursesw" \
+		LDFLAGS="-L$PREFIX/lib" \
+		CFLAGS="-DHAVE_BOOLCODES" \
+		./configure --prefix="$PREFIX" --enable-multibyte; then
 		warn "Zsh configuration failed - check ncurses installation"
 		warn "Skipping zsh installation"
 		return
