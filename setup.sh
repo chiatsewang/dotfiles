@@ -48,7 +48,9 @@ for f in "$DOTFILES_DIR/modules/"*.sh; do
 done
 
 # Default install order (dependencies matter)
-DEFAULT_ORDER=(ssh-github zsh ohmyzsh python node claude aws kubectl)
+# Note: ssh-github is interactive, so it's not in the default list
+# Run manually: bash setup.sh ssh-github
+DEFAULT_ORDER=(zsh ohmyzsh python node claude aws kubectl)
 
 list_modules() {
 	echo ""

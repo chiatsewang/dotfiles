@@ -31,10 +31,14 @@ bash ~/.dotfiles/setup.sh
 ## Usage
 
 ```bash
-bash setup.sh                    # install all defaults
-bash setup.sh ssh python node    # install specific modules only
-bash setup.sh --list             # show available modules
+bash setup.sh                         # install all defaults (zsh, ohmyzsh, python, node, claude, aws, kubectl)
+bash setup.sh ssh-github              # setup GitHub SSH key (interactive)
+bash setup.sh zsh python node         # install specific modules only
+bash setup.sh --list                  # show available modules
+bash setup.sh --version               # show version
 ```
+
+**Note:** The `ssh-github` module is interactive and not included in default setup. Run it separately when needed.
 
 ## Repo Structure
 
@@ -111,9 +115,10 @@ The hooks will automatically:
 
 ## Roadmap
 
-- [ ] Core modules (ssh, zsh, ohmyzsh, python, node, claude)
-- [ ] Cloud tooling (aws, kubectl)
-- [ ] Config templates (.zshrc, .gitconfig)
+- [x] Core modules (ssh-github, zsh, ohmyzsh, python, node, claude)
+- [x] Cloud tooling (aws, kubectl)
+- [x] Config templates (.zshrc)
+- [x] Pre-commit hooks (shfmt, shellcheck)
 - [ ] CI smoke test
 
 ## License

@@ -38,7 +38,8 @@ install_zsh() {
 
 	export CFLAGS="-I$PREFIX/include" LDFLAGS="-L$PREFIX/lib"
 	export PKG_CONFIG_PATH="$PREFIX/lib/pkgconfig:${PKG_CONFIG_PATH:-}"
-	./configure --prefix="$PREFIX" --enable-multibyte
+	# Disable termcap module to avoid ncurses conflicts
+	./configure --prefix="$PREFIX" --enable-multibyte --disable-dynamic
 	make -j"$(nproc)" && make install
 
 	ok "Zsh to $PREFIX/bin/zsh"
