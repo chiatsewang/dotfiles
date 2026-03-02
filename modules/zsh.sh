@@ -16,8 +16,11 @@ install_zsh() {
 	cd "$src_dir" || return
 
 	local tarball="zsh-${ver}.tar.xz"
-	[[ -f "$tarball" ]] || curl -fSL -o "$tarball" \
-		"https://sourceforge.net/projects/zsh/files/zsh/${ver}/${tarball}/download"
+	if [[ ! -f "$tarball" ]]; then
+		# Try official zsh.org mirror first, fallback to SourceForge
+		curl -fSL -o "$tarball" "https://www.zsh.org/pub/zsh-${ver}.tar.xz" ||
+			curl -fSL -o "$tarball" "https://downloads.sourceforge.net/project/zsh/zsh/${ver}/${tarball}"
+	fi
 
 	tar xf "$tarball" --strip-components=1 2>/dev/null || tar xf "$tarball"
 

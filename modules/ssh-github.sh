@@ -51,6 +51,8 @@ EOF
 		ok "SSH config to ${host_alias} added"
 	else
 		ok "SSH config already has ${host_alias}"
+		# If config exists, assume key is already set up
+		return
 	fi
 
 	echo ""
