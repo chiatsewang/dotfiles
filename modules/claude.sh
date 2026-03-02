@@ -12,7 +12,11 @@ install_claude() {
 	curl -fsSL https://claude.ai/install.sh | bash
 	export PATH="$HOME/.claude/bin:$HOME/.local/bin:$PATH"
 
-	command_exists claude && ok "Claude Code installed" || warn "Restart shell to use claude"
+	if command_exists claude; then
+		ok "Claude Code installed"
+	else
+		warn "Restart shell to use claude"
+	fi
 }
 
 verify_claude() { claude --version 2>/dev/null || echo "installed"; }

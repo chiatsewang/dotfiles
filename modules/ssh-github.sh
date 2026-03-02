@@ -19,7 +19,8 @@ install_ssh_github() {
 	if [[ -f "$key" ]]; then
 		ok "SSH key exists at $key"
 	else
-		local default_email="$(whoami)@$(hostname)"
+		local default_email
+		default_email="$(whoami)@$(hostname)"
 		read -rp "  Email for key [$default_email]: " email
 		email="${email:-$default_email}"
 		ssh-keygen -t ed25519 -C "$email" -f "$key" -N ""
@@ -62,12 +63,14 @@ EOF
 	echo ""
 	read -rp "  Press Enter after adding to GitHub (or 's' to skip) ..." choice
 	if [[ "${choice,,}" != "s" ]]; then
-		ssh -T git@${host_alias} 2>&1 | head -3 || true
+		ssh -T "git@${host_alias}" 2>&1 | head -3 || true
 	fi
 }
 
 verify_ssh_github() {
 	# Check if any github_*_sshkey files exist
-	local keys=($HOME/.ssh/github_*_sshkey)
+	local keys
+	# shellcheck disable=SC2206
+	keys=($HOME/.ssh/github_*_sshkey)
 	[[ -f "${keys[0]}" ]] && echo "key(s) present" || echo "missing"
 }

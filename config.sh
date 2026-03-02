@@ -1,18 +1,18 @@
-#!/usr/bin/env bash
+# shellcheck shell=bash
 # ============================================================================
-# config.sh — Version pins & preferences
+# config.sh — Version pins & preferences (sourced by setup.sh)
 # ============================================================================
 
 # Zsh (from source)
-ZSH_VERSION_TAG="5.9.1"
+export ZSH_VERSION_TAG="5.9.1"
 
 # nvm / Node
-NVM_VERSION="v0.40.1"
-NODE_VERSION="--lts" # or pin: "22"
+export NVM_VERSION="v0.40.1"
+export NODE_VERSION="--lts" # or pin: "22"
 
 # SSH
 # Note: ssh-github module will prompt for account name and generate
 # keys with format: ~/.ssh/github_<account>_sshkey
 
 # Paths
-PREFIX="$HOME/.local"
+export PREFIX="$HOME/.local"

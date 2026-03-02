@@ -13,7 +13,7 @@ install_zsh() {
 	info "Compiling Zsh $ver from source to $PREFIX ..."
 	local src_dir="$PREFIX/src/zsh-$ver"
 	ensure_dir "$src_dir"
-	cd "$src_dir"
+	cd "$src_dir" || return
 
 	local tarball="zsh-${ver}.tar.xz"
 	[[ -f "$tarball" ]] || curl -fSL -o "$tarball" \
@@ -25,12 +25,12 @@ install_zsh() {
 	if ! pkg-config --exists ncursesw 2>/dev/null && [[ ! -d "$PREFIX/include/ncursesw" ]]; then
 		warn "Building local ncurses ..."
 		local nc_dir="$PREFIX/src/ncurses-6.5"
-		ensure_dir "$nc_dir" && cd "$nc_dir"
+		ensure_dir "$nc_dir" && cd "$nc_dir" || return
 		curl -fSL -o nc.tar.gz "https://ftp.gnu.org/pub/gnu/ncurses/ncurses-6.5.tar.gz"
 		tar xzf nc.tar.gz --strip-components=1
 		./configure --prefix="$PREFIX" --with-shared --enable-widec --without-debug
 		make -j"$(nproc)" && make install
-		cd "$src_dir"
+		cd "$src_dir" || return
 	fi
 
 	export CFLAGS="-I$PREFIX/include" LDFLAGS="-L$PREFIX/lib"

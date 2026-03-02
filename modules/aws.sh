@@ -11,7 +11,7 @@ install_aws() {
 
 	local tmp_dir
 	tmp_dir="$(mktemp -d)"
-	cd "$tmp_dir"
+	cd "$tmp_dir" || return
 
 	info "Downloading AWS CLI v2 ..."
 	curl -fsSL "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o awscliv2.zip

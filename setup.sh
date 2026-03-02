@@ -36,6 +36,7 @@ source "$DOTFILES_DIR/modules/_common.sh"
 
 # ── Config ───────────────────────────────────────────────────────────────────
 CONFIG_FILE="$DOTFILES_DIR/config.sh"
+# shellcheck disable=SC1090
 [[ -f "$CONFIG_FILE" ]] && source "$CONFIG_FILE"
 
 # ── Module discovery ─────────────────────────────────────────────────────────
@@ -96,8 +97,11 @@ for mod in "${MODULES[@]}"; do
 		warn "Module '$mod' not found — skipping"
 		continue
 	fi
+	# shellcheck disable=SC1090
 	source "$mod_file"
-	"install_${mod}"
+	# Replace hyphens with underscores for function names
+	mod_func="${mod//-/_}"
+	"install_${mod_func}"
 done
 
 # ── Dotfiles / configs ──────────────────────────────────────────────────────
@@ -115,7 +119,9 @@ echo "║               dotfiles setup complete                        ║"
 echo "╠══════════════════════════════════════════════════════════════╣"
 
 for mod in "${MODULES[@]}"; do
-	verify_fn="verify_${mod}"
+	# Replace hyphens with underscores for function names
+	mod_func="${mod//-/_}"
+	verify_fn="verify_${mod_func}"
 	if declare -f "$verify_fn" &>/dev/null; then
 		local_result=$($verify_fn 2>&1 || echo "-")
 		printf "║  %-12s - %-44s ║\n" "$mod" "$local_result"

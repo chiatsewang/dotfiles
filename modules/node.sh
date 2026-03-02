@@ -19,7 +19,7 @@ install_node() {
 	if command_exists node; then
 		ok "Node already installed — $(node --version)"
 	else
-		nvm install $node_ver
+		nvm install "$node_ver"
 		nvm alias default node
 	fi
 

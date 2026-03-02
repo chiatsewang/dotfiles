@@ -17,12 +17,14 @@ link_dotfiles() {
 	# Files starting with _ are treated as templates - copied, not linked.
 
 	for dir in "$configs_dir"/*/; do
-		local category="$(basename "$dir")"
+		local category
+		category="$(basename "$dir")"
 
 		for src in "$dir".* "$dir"*; do
 			[[ -f "$src" ]] || continue
 
-			local filename="$(basename "$src")"
+			local filename
+			filename="$(basename "$src")"
 			local target
 
 			# Determine target path
@@ -39,7 +41,8 @@ link_dotfiles() {
 
 			# Backup existing file
 			if [[ -e "$target" && ! -L "$target" ]]; then
-				local backup="${target}.backup.$(date +%s)"
+				local backup
+				backup="${target}.backup.$(date +%s)"
 				warn "Backing up existing $filename to $backup"
 				mv "$target" "$backup"
 			fi

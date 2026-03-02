@@ -1,5 +1,7 @@
 # Dotfiles
 
+> Version 1.0.0
+
 Modular, no-sudo dev environment bootstrap. One command, new server ready.
 
 ## Quick Start
@@ -66,6 +68,46 @@ dotfiles/
 **Idempotent.** Safe to re-run — each module skips if already installed.
 
 **Config templates.** Files in `configs/` are symlinked to `$HOME`. Machine-specific overrides go in `~/.zshrc.local`, `~/.gitconfig.local`, etc.
+
+## Development
+
+### Pre-commit Hooks
+
+This repo uses [pre-commit](https://pre-commit.com/) to automatically check formatting before commits.
+
+**Install pre-commit:**
+
+```bash
+# Using pip
+pip install pre-commit
+
+# Using homebrew (macOS)
+brew install pre-commit
+```
+
+**Setup hooks:**
+
+```bash
+cd ~/.dotfiles
+pre-commit install
+```
+
+**Run manually:**
+
+```bash
+# Check all files
+pre-commit run --all-files
+
+# Check specific files
+pre-commit run --files setup.sh modules/*.sh
+```
+
+The hooks will automatically:
+
+- Format shell scripts with `shfmt`
+- Check shell scripts with `shellcheck`
+- Fix trailing whitespace
+- Check YAML syntax
 
 ## Roadmap
 
