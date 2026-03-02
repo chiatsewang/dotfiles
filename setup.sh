@@ -50,7 +50,7 @@ done
 # Default install order (dependencies matter)
 # Note: ssh-github is interactive, so it's not in the default list
 # Run manually: bash setup.sh ssh-github
-DEFAULT_ORDER=(zsh ohmyzsh python node claude aws kubectl)
+DEFAULT_ORDER=(ncurses zsh ohmyzsh python node claude aws kubectl)
 
 list_modules() {
 	echo ""

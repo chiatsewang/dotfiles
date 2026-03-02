@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 # DESC: Zsh shell (compiled from source to ~/.local)
+# DEPENDS: ncurses
 
 install_zsh() {
 	info "-- zsh --"
@@ -30,23 +31,23 @@ install_zsh() {
 
 	tar xf "$tarball" --strip-components=1 2>/dev/null || tar xf "$tarball"
 
-	# Try to configure - if ncurses is missing, skip gracefully
-	if ! ./configure --prefix="$PREFIX" --enable-multibyte 2>&1; then
-		warn "Zsh configuration failed - likely missing ncurses-devel"
-		warn "Skipping zsh installation. You can:"
-		warn "  1. Ask admin to install: ncurses-devel (RHEL) or libncurses-dev (Debian)"
-		warn "  2. Use system zsh if available"
-		warn "Continuing with remaining modules..."
+	# Configure with locally-built ncurses
+	export CPPFLAGS="-I$PREFIX/include -I$PREFIX/include/ncursesw"
+	export LDFLAGS="-L$PREFIX/lib"
+	export PKG_CONFIG_PATH="$PREFIX/lib/pkgconfig:$PKG_CONFIG_PATH"
+
+	if ! ./configure --prefix="$PREFIX" --enable-multibyte >/dev/null 2>&1; then
+		warn "Zsh configuration failed - check ncurses installation"
+		warn "Skipping zsh installation"
 		return
 	fi
 
-	if ! make -j"$(nproc)"; then
+	if ! make -j"$(nproc)" >/dev/null 2>&1; then
 		warn "Zsh build failed - skipping installation"
-		warn "Continuing with remaining modules..."
 		return
 	fi
 
-	make install
+	make install >/dev/null 2>&1
 	ok "Zsh installed to $PREFIX/bin/zsh"
 }
 
