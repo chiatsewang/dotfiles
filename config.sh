@@ -4,7 +4,7 @@
 # ============================================================================
 
 # Zsh (from source)
-export ZSH_VERSION_TAG="5.9.1"
+export ZSH_VERSION_TAG="5.9"
 
 # nvm / Node
 export NVM_VERSION="v0.40.1"
