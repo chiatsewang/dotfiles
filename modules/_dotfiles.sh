@@ -14,7 +14,8 @@ link_dotfiles() {
 	#   configs/git/.gitconfig   to ~/.gitconfig
 	#   configs/ssh/config       to ~/.ssh/config
 	#
-	# Files starting with _ are treated as templates - copied, not linked.
+	# All config files are copied as templates to allow local modifications
+	# without affecting the git repo.
 
 	for dir in "$configs_dir"/*/; do
 		local category
@@ -33,23 +34,23 @@ link_dotfiles() {
 			*) target="$HOME/$filename" ;;
 			esac
 
-			# Skip if target is already correct symlink
-			if [[ -L "$target" && "$(readlink -f "$target")" == "$(readlink -f "$src")" ]]; then
-				ok "$filename already linked"
+			# Copy config files as templates
+			if [[ -f "$target" ]] && cmp -s "$src" "$target"; then
+				ok "$filename already up to date"
 				continue
 			fi
 
 			# Backup existing file
-			if [[ -e "$target" && ! -L "$target" ]]; then
+			if [[ -e "$target" ]]; then
 				local backup
 				backup="${target}.backup.$(date +%s)"
 				warn "Backing up existing $filename to $backup"
-				mv "$target" "$backup"
+				cp "$target" "$backup"
 			fi
 
 			ensure_dir "$(dirname "$target")"
-			ln -sf "$(readlink -f "$src")" "$target"
-			ok "$filename to $target"
+			cp "$src" "$target"
+			ok "$filename copied to $target"
 		done
 	done
 }
