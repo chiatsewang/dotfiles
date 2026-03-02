@@ -15,16 +15,16 @@ bash ~/.dotfiles/setup.sh
 
 ## What It Installs
 
-| Module       | Tool                       | Method          | Location                          |
-|--------------|----------------------------|-----------------|-----------------------------------|
-| `ssh-github` | GitHub SSH (Ed25519)       | ssh-keygen      | `~/.ssh/github_<host>_sshkey`     |
-| `zsh`        | Zsh                        | From source     | `~/.local/bin/zsh`                |
-| `ohmyzsh`    | Oh My Zsh + plugins + p10k | Official script | `~/.oh-my-zsh/`                   |
-| `python`     | Python via uv              | Astral          | `~/.local/bin/uv`                 |
-| `node`       | Node.js + npm via nvm      | nvm             | `~/.nvm/`                         |
-| `claude`     | Claude Code                | Native binary   | `~/.claude/bin/claude`            |
-| `aws`        | AWS CLI v2                 | User-local      | `~/.local/bin/aws`                |
-| `kubectl`    | Kubernetes CLI             | Binary download | `~/.local/bin/kubectl`            |
+| Module       | Tool                       | Method          | Location                            |
+|--------------|----------------------------|-----------------|-------------------------------------|
+| `ssh-github` | GitHub SSH (Ed25519)       | ssh-keygen      | `~/.ssh/github_<account>_sshkey`    |
+| `zsh`        | Zsh                        | From source     | `~/.local/bin/zsh`                  |
+| `ohmyzsh`    | Oh My Zsh + plugins + p10k | Official script | `~/.oh-my-zsh/`                     |
+| `python`     | Python via uv              | Astral          | `~/.local/bin/uv`                   |
+| `node`       | Node.js + npm via nvm      | nvm             | `~/.nvm/`                           |
+| `claude`     | Claude Code                | Native binary   | `~/.claude/bin/claude`              |
+| `aws`        | AWS CLI v2                 | User-local      | `~/.local/bin/aws`                  |
+| `kubectl`    | Kubernetes CLI             | Binary download | `~/.local/bin/kubectl`              |
 
 ## Usage
 
