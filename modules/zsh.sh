@@ -3,10 +3,16 @@
 
 install_zsh() {
 	info "-- zsh --"
-	local ver="${ZSH_VERSION_TAG:-5.9.1}"
+	local ver="${ZSH_VERSION_TAG:-5.9}"
 
 	if command_exists zsh; then
 		ok "Zsh already available - $(zsh --version 2>&1 | head -1)"
+		return
+	fi
+
+	# Check if system zsh is available
+	if [[ -x /bin/zsh ]] || [[ -x /usr/bin/zsh ]]; then
+		ok "System zsh found - using existing installation"
 		return
 	fi
 
@@ -24,14 +30,20 @@ install_zsh() {
 
 	tar xf "$tarball" --strip-components=1 2>/dev/null || tar xf "$tarball"
 
-	# Use system ncurses - don't build local version to avoid conflicts
-	./configure --prefix="$PREFIX" --enable-multibyte
+	# Try to configure - if ncurses is missing, skip gracefully
+	if ! ./configure --prefix="$PREFIX" --enable-multibyte 2>&1; then
+		warn "Zsh configuration failed - likely missing ncurses-devel"
+		warn "Skipping zsh installation. You can:"
+		warn "  1. Ask admin to install: ncurses-devel (RHEL) or libncurses-dev (Debian)"
+		warn "  2. Use system zsh if available"
+		warn "Continuing with remaining modules..."
+		return
+	fi
 
 	if ! make -j"$(nproc)"; then
-		fail "Zsh build failed. You may need to install ncurses-devel:
-  On RHEL/CentOS: sudo yum install ncurses-devel
-  On Debian/Ubuntu: sudo apt install libncurses-dev
-  On macOS: brew install ncurses"
+		warn "Zsh build failed - skipping installation"
+		warn "Continuing with remaining modules..."
+		return
 	fi
 
 	make install
