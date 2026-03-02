@@ -34,7 +34,7 @@ install_zsh() {
 	# Configure with locally-built ncurses
 	export CPPFLAGS="-I$PREFIX/include -I$PREFIX/include/ncursesw"
 	export LDFLAGS="-L$PREFIX/lib"
-	export PKG_CONFIG_PATH="$PREFIX/lib/pkgconfig:$PKG_CONFIG_PATH"
+	export PKG_CONFIG_PATH="$PREFIX/lib/pkgconfig${PKG_CONFIG_PATH:+:$PKG_CONFIG_PATH}"
 
 	if ! ./configure --prefix="$PREFIX" --enable-multibyte >/dev/null 2>&1; then
 		warn "Zsh configuration failed - check ncurses installation"
