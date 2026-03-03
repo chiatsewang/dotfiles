@@ -4,17 +4,6 @@
 
 Modular, no-sudo dev environment bootstrap. One command, new server ready.
 
-## Prerequisites
-
-System libraries (typically pre-installed, or available via package manager):
-
-- **ncurses-devel** - Required for zsh
-  - RHEL/CentOS: `sudo yum install ncurses-devel`
-  - Debian/Ubuntu: `sudo apt install libncurses-dev`
-  - macOS: `brew install ncurses`
-
-All other tools install to `~/.local` without sudo.
-
 ## Quick Start
 
 ```bash
@@ -30,7 +19,7 @@ bash ~/.dotfiles/setup.sh
 
 | Module       | Tool                       | Method          | Location                            |
 |--------------|----------------------------|-----------------|-------------------------------------|
-| `ssh-github` | GitHub SSH (Ed25519)       | ssh-keygen      | `~/.ssh/github_<account>_sshkey`    |
+| `ncurses`    | ncurses library            | From source     | `~/.local/lib/libncurses.a`         |
 | `zsh`        | Zsh                        | From source     | `~/.local/bin/zsh`                  |
 | `ohmyzsh`    | Oh My Zsh + plugins + p10k | Official script | `~/.oh-my-zsh/`                     |
 | `python`     | Python via uv              | Astral          | `~/.local/bin/uv`                   |
@@ -38,11 +27,12 @@ bash ~/.dotfiles/setup.sh
 | `claude`     | Claude Code                | Native binary   | `~/.claude/bin/claude`              |
 | `aws`        | AWS CLI v2                 | User-local      | `~/.local/bin/aws`                  |
 | `kubectl`    | Kubernetes CLI             | Binary download | `~/.local/bin/kubectl`              |
+| `ssh-github` | GitHub SSH (Ed25519)       | ssh-keygen      | `~/.ssh/github_<account>_sshkey`    |
 
 ## Usage
 
 ```bash
-bash setup.sh                         # install all defaults (zsh, ohmyzsh, python, node, claude, aws, kubectl)
+bash setup.sh                         # install all defaults (ncurses, zsh, ohmyzsh, python, node, claude, aws, kubectl)
 bash setup.sh ssh-github              # setup GitHub SSH key (interactive)
 bash setup.sh zsh python node         # install specific modules only
 bash setup.sh --list                  # show available modules
@@ -59,19 +49,19 @@ dotfiles/
 ├── config.sh             # version pins (zsh, nvm, node, etc.)
 ├── modules/
 │   ├── _common.sh        # shared helpers
-│   ├── _dotfiles.sh      # symlink configs to $HOME
+│   ├── _dotfiles.sh      # copy configs to $HOME
 │   ├── _shellrc.sh       # managed PATH block in rc files
-│   ├── ssh.sh
+│   ├── ncurses.sh
 │   ├── zsh.sh
 │   ├── ohmyzsh.sh
 │   ├── python.sh
 │   ├── node.sh
 │   ├── claude.sh
 │   ├── aws.sh
-│   └── kubectl.sh
-└── configs/              # dotfile templates (symlinked to $HOME)
-    ├── zsh/.zshrc
-    └── git/.gitconfig
+│   ├── kubectl.sh
+│   └── ssh-github.sh
+└── configs/              # dotfile templates (copied to $HOME)
+    └── zsh/.zshrc
 ```
 
 ## Design
@@ -82,7 +72,7 @@ dotfiles/
 
 **Idempotent.** Safe to re-run — each module skips if already installed.
 
-**Config templates.** Files in `configs/` are symlinked to `$HOME`. Machine-specific overrides go in `~/.zshrc.local`, `~/.gitconfig.local`, etc.
+**Config templates.** Files in `configs/` are copied to `$HOME`. Machine-specific overrides go in `~/.zshrc.local`, etc.
 
 ## Development
 
