@@ -32,6 +32,10 @@ install_zsh() {
 	tar xf "$tarball" --strip-components=1 2>/dev/null || tar xf "$tarball"
 
 	# Configure with locally-built ncurses
+	# Fix 1: Include ncursesw headers to resolve "No terminal library found" error
+	# Reference: https://blog.csdn.net/weixin_63866037/article/details/150345821
+	# Fix 2: Define HAVE_BOOLCODES to resolve conflicting type definitions for 'boolcodes'
+	# Reference: https://github.com/SerenityOS/serenity/issues/26015
 	export PKG_CONFIG_PATH="$PREFIX/lib/pkgconfig${PKG_CONFIG_PATH:+:$PKG_CONFIG_PATH}"
 
 	info "Configuring zsh..."
