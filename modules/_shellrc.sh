@@ -51,7 +51,7 @@ fi
 
 # Auto-switch to zsh if available and not already in zsh
 if [ -n "$BASH_VERSION" ] && command -v zsh >/dev/null 2>&1 && [ -z "$ZSH_VERSION" ]; then
-    exec zsh
+    zsh
 fi
 # ── end dotfiles ─────────────────────────────────────────────────────────
 BASHEOF
