@@ -1,6 +1,19 @@
 # Dotfiles
 
+> Version 1.0.0
+
 Modular, no-sudo dev environment bootstrap. One command, new server ready.
+
+## Prerequisites
+
+System libraries (typically pre-installed, or available via package manager):
+
+- **ncurses-devel** - Required for zsh
+  - RHEL/CentOS: `sudo yum install ncurses-devel`
+  - Debian/Ubuntu: `sudo apt install libncurses-dev`
+  - macOS: `brew install ncurses`
+
+All other tools install to `~/.local` without sudo.
 
 ## Quick Start
 
@@ -15,24 +28,28 @@ bash ~/.dotfiles/setup.sh
 
 ## What It Installs
 
-| Module       | Tool                       | Method          | Location                          |
-|--------------|----------------------------|-----------------|-----------------------------------|
-| `ssh-github` | GitHub SSH (Ed25519)       | ssh-keygen      | `~/.ssh/github_<host>_sshkey`     |
-| `zsh`        | Zsh                        | From source     | `~/.local/bin/zsh`                |
-| `ohmyzsh`    | Oh My Zsh + plugins + p10k | Official script | `~/.oh-my-zsh/`                   |
-| `python`     | Python via uv              | Astral          | `~/.local/bin/uv`                 |
-| `node`       | Node.js + npm via nvm      | nvm             | `~/.nvm/`                         |
-| `claude`     | Claude Code                | Native binary   | `~/.claude/bin/claude`            |
-| `aws`        | AWS CLI v2                 | User-local      | `~/.local/bin/aws`                |
-| `kubectl`    | Kubernetes CLI             | Binary download | `~/.local/bin/kubectl`            |
+| Module       | Tool                       | Method          | Location                            |
+|--------------|----------------------------|-----------------|-------------------------------------|
+| `ssh-github` | GitHub SSH (Ed25519)       | ssh-keygen      | `~/.ssh/github_<account>_sshkey`    |
+| `zsh`        | Zsh                        | From source     | `~/.local/bin/zsh`                  |
+| `ohmyzsh`    | Oh My Zsh + plugins + p10k | Official script | `~/.oh-my-zsh/`                     |
+| `python`     | Python via uv              | Astral          | `~/.local/bin/uv`                   |
+| `node`       | Node.js + npm via nvm      | nvm             | `~/.nvm/`                           |
+| `claude`     | Claude Code                | Native binary   | `~/.claude/bin/claude`              |
+| `aws`        | AWS CLI v2                 | User-local      | `~/.local/bin/aws`                  |
+| `kubectl`    | Kubernetes CLI             | Binary download | `~/.local/bin/kubectl`              |
 
 ## Usage
 
 ```bash
-bash setup.sh                    # install all defaults
-bash setup.sh ssh python node    # install specific modules only
-bash setup.sh --list             # show available modules
+bash setup.sh                         # install all defaults (zsh, ohmyzsh, python, node, claude, aws, kubectl)
+bash setup.sh ssh-github              # setup GitHub SSH key (interactive)
+bash setup.sh zsh python node         # install specific modules only
+bash setup.sh --list                  # show available modules
+bash setup.sh --version               # show version
 ```
+
+**Note:** The `ssh-github` module is interactive and not included in default setup. Run it separately when needed.
 
 ## Repo Structure
 
@@ -67,11 +84,52 @@ dotfiles/
 
 **Config templates.** Files in `configs/` are symlinked to `$HOME`. Machine-specific overrides go in `~/.zshrc.local`, `~/.gitconfig.local`, etc.
 
+## Development
+
+### Pre-commit Hooks
+
+This repo uses [pre-commit](https://pre-commit.com/) to automatically check formatting before commits.
+
+**Install pre-commit:**
+
+```bash
+# Using pip
+pip install pre-commit
+
+# Using homebrew (macOS)
+brew install pre-commit
+```
+
+**Setup hooks:**
+
+```bash
+cd ~/.dotfiles
+pre-commit install
+```
+
+**Run manually:**
+
+```bash
+# Check all files
+pre-commit run --all-files
+
+# Check specific files
+pre-commit run --files setup.sh modules/*.sh
+```
+
+The hooks will automatically:
+
+- Format shell scripts with `shfmt`
+- Check shell scripts with `shellcheck`
+- Fix trailing whitespace
+- Check YAML syntax
+
 ## Roadmap
 
-- [ ] Core modules (ssh, zsh, ohmyzsh, python, node, claude)
-- [ ] Cloud tooling (aws, kubectl)
-- [ ] Config templates (.zshrc, .gitconfig)
+- [x] Core modules (ssh-github, zsh, ohmyzsh, python, node, claude)
+- [x] Cloud tooling (aws, kubectl)
+- [x] Config templates (.zshrc)
+- [x] Pre-commit hooks (shfmt, shellcheck)
 - [ ] CI smoke test
 
 ## License
